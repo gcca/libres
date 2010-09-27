@@ -1,0 +1,12 @@
+diff -rupN msncp-0.7.1-beta_jo/windows.py msncp-0.7.1-beta/windows.py
+--- msncp-0.7.1-beta_jo/windows.py	2007-10-30 13:07:13.000000000 -0500
++++ msncp-0.7.1-beta/windows.py	2010-09-27 01:03:51.143000023 -0500
+@@ -34,6 +34,7 @@ const_leftmenuwidth = 15
+ const_rightmenuwidth = 15
+ const_leftscroll = 1
+ const_rightscroll = 1
++curses.KEY_BACKSPACE = 127
+ 
+ def decode(str):
+ 	stru = str.decode('utf-8')
+Los ficheros binarios msncp-0.7.1-beta_jo/.windows.py.swp y msncp-0.7.1-beta/.windows.py.swp son distintos
