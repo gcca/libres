@@ -1,5 +1,5 @@
 *** dwm.c	2011-05-30 00:05:45.926195438 -0500
---- DWM.c	2011-05-31 07:48:31.450009367 -0500
+--- DWM.c	2011-05-31 07:55:28.497750062 -0500
 ***************
 *** 1,25 ****
 - /* See LICENSE file for copyright and license details.
@@ -283,7 +283,7 @@
   static void setlayout(const Arg *arg);
   static void setmfact(const Arg *arg);
   static void setup(void);
---- 160,191 ----
+--- 160,192 ----
   static void focusmon(const Arg *arg);
   static void focusstack(const Arg *arg);
   static unsigned long getcolor(const char *colstr);
@@ -311,6 +311,7 @@
   static void restack(Monitor *m);
   static void run(void);
   static void scan(void);
+! static void selectionclear(XEvent *e);
 ! static void sendmon(Client *c,Monitor *m);
 ! static void setclientstate(Client *c,long state);
   static void setlayout(const Arg *arg);
@@ -332,7 +333,7 @@
   static void unmapnotify(XEvent *e);
   static Bool updategeom(void);
   static void updatebarpos(Monitor *m);
---- 194,207 ----
+--- 195,208 ----
   static void spawn(const Arg *arg);
   static void tag(const Arg *arg);
   static void tagmon(const Arg *arg);
@@ -517,7 +518,7 @@
   	if(m->lt[m->sellt]->arrange)
   		m->lt[m->sellt]->arrange(m);
   	restack(m);
---- 214,374 ----
+--- 215,376 ----
   static void view(const Arg *arg);
   static Client *wintoclient(Window w);
   static Monitor *wintomon(Window w);
@@ -546,6 +547,7 @@
 ! 	[MappingNotify]=mappingnotify,
 ! 	[MapRequest]=maprequest,
 ! 	[PropertyNotify]=propertynotify,
+! 	[SelectionClear]=selectionclear,
 ! 	[UnmapNotify]=unmapnotify
   };
 ! static Atom wmatom[WMLast],netatom[NetLast];
@@ -790,7 +792,7 @@
   	free(mon);
   }
   
---- 376,482 ----
+--- 378,484 ----
   
   void
   attach(Client *c) {
@@ -911,7 +913,7 @@
   	XFree(wmh);
   }
   
---- 484,494 ----
+--- 486,496 ----
   clearurgent(Client *c) {
   	XWMHints *wmh;
   
@@ -960,7 +962,7 @@
   			arrange(NULL);
   		}
   	}
---- 496,530 ----
+--- 498,532 ----
   configure(Client *c) {
   	XConfigureEvent ce;
   
@@ -1114,7 +1116,7 @@
   	}
   	return m;
   }
---- 534,697 ----
+--- 536,699 ----
   configurerequest(XEvent *e) {
   	Client *c;
   	Monitor *m;
@@ -1200,7 +1202,7 @@
 !       e.format=32;
 !       e.data.l[0]=CurrentTime;
 !       e.data.l[1]=atom_sel;
-!       e.data.l[2]=tray;
+!       e.data.l[2]=m->traywin;
 !       e.data.l[3]=0;
 !       e.data.l[4]=0;
 !       XSendEvent(dpy,root,False,StructureNotifyMask,(XEvent*)&e);
@@ -1404,7 +1406,7 @@
   		focus(c);
   	else
   		focus(NULL);
---- 699,820 ----
+--- 701,822 ----
   void
   drawbar(Monitor *m) {
   	int x;
@@ -1605,7 +1607,7 @@
   	}
   	if(c) {
   		focus(c);
---- 823,897 ----
+--- 825,899 ----
   void
   expose(XEvent *e) {
   	Monitor *m;
@@ -1767,7 +1769,7 @@
   	}
   }
   
---- 901,984 ----
+--- 903,986 ----
   
   unsigned long
   getcolor(const char *colstr) {
@@ -1884,7 +1886,7 @@
   		XFreeStringList(missing);
   	}
   	if(dc.font.set) {
---- 986,1015 ----
+--- 988,1017 ----
   grabkeys(void) {
   	updatenumlockmask();
   	{
@@ -1952,7 +1954,7 @@
   		XFree(protocols);
   	}
   	return ret;
---- 1017,1051 ----
+--- 1019,1053 ----
   		XFontStruct **xfonts;
   		char **font_names;
   
@@ -2006,7 +2008,7 @@
   
   void
   keypress(XEvent *e) {
---- 1053,1068 ----
+--- 1055,1070 ----
   
   #ifdef XINERAMA
   static Bool
@@ -2037,7 +2039,7 @@
   			keys[i].func(&(keys[i].arg));
   }
   
---- 1070,1081 ----
+--- 1072,1083 ----
   	KeySym keysym;
   	XKeyEvent *ev;
   
@@ -2196,7 +2198,7 @@
   		switch (ev.type) {
   		case ConfigureRequest:
   		case Expose:
---- 1086,1227 ----
+--- 1088,1229 ----
   	if(!selmon->sel)
   		return;
   	if(isprotodel(selmon->sel)) {
@@ -2388,7 +2390,7 @@
   			return m;
   	return selmon;
   }
---- 1229,1275 ----
+--- 1231,1277 ----
   			handler[ev.type](&ev);
   			break;
   		case MotionNotify:
@@ -2456,7 +2458,7 @@
   				arrange(c->mon);
   			break;
   		case XA_WM_NORMAL_HINTS:
---- 1278,1295 ----
+--- 1280,1297 ----
   propertynotify(XEvent *e) {
   	Client *c;
   	Window trans;
@@ -2486,7 +2488,7 @@
   				drawbar(c->mon);
   		}
   	}
---- 1300,1308 ----
+--- 1302,1310 ----
   			drawbars();
   			break;
   		}
@@ -2579,7 +2581,7 @@
   		switch(ev.type) {
   		case ConfigureRequest:
   		case Expose:
---- 1310,1390 ----
+--- 1312,1392 ----
   
   void
   clientmessage(XEvent *e) {
@@ -2689,7 +2691,7 @@
   		focus(NULL);
   	}
   }
---- 1392,1417 ----
+--- 1394,1419 ----
   			handler[ev.type](&ev);
   			break;
   		case MotionNotify:
@@ -2770,7 +2772,7 @@
   		}
   		if(wins)
   			XFree(wins);
---- 1425,1475 ----
+--- 1427,1477 ----
   	drawbar(m);
   	if(!m->sel)
   		return;
@@ -2838,10 +2840,16 @@
   	attach(c);
   	attachstack(c);
   	focus(NULL);
---- 1477,1490 ----
+--- 1479,1498 ----
   }
   
   void
+! selectionclear(XEvent *e) {
+! 	if(XGetSelectionOwner(dpy,atom_sel)==mons->traywin)
+! 		XSetSelectionOwner(dpy,atom_sel,None,CurrentTime);
+! }
+! 
+! void
 ! sendmon(Client *c,Monitor *m) {
 ! 	if(c->mon==m)
   		return;
@@ -2892,7 +2900,7 @@
   	arrange(selmon);
   }
   
---- 1492,1527 ----
+--- 1500,1535 ----
   }
   
   void
@@ -2985,7 +2993,7 @@
   	grabkeys();
   }
   
---- 1529,1575 ----
+--- 1537,1583 ----
   setup(void) {
   	XSetWindowAttributes wa;
   
@@ -3069,7 +3077,7 @@
   		perror(" failed");
   		exit(0);
   	}
---- 1577,1610 ----
+--- 1585,1618 ----
   showhide(Client *c) {
   	if(!c)
   		return;
@@ -3171,7 +3179,7 @@
   	arrange(selmon);
   }
   
---- 1612,1673 ----
+--- 1620,1681 ----
   
   void
   tag(const Arg *arg) {
@@ -3246,7 +3254,7 @@
   	arrange(selmon);
   }
   
---- 1675,1684 ----
+--- 1683,1692 ----
   togglefloating(const Arg *arg) {
   	if(!selmon->sel)
   		return;
@@ -3308,7 +3316,7 @@
   		XSetErrorHandler(xerror);
   		XUngrabServer(dpy);
   	}
---- 1688,1735 ----
+--- 1696,1743 ----
   
   	if(!selmon->sel)
   		return;
@@ -3369,7 +3377,7 @@
   }
   
   void
---- 1741,1759 ----
+--- 1749,1767 ----
   void
   unmapnotify(XEvent *e) {
   	Client *c;
@@ -3517,7 +3525,7 @@
   	XFreeModifiermap(modmap);
   }
   
---- 1761,1884 ----
+--- 1769,1892 ----
   	Monitor *m;
   	XSetWindowAttributes wa;
   
@@ -3707,7 +3715,7 @@
   	drawbar(selmon);
   }
   
---- 1887,1948 ----
+--- 1895,1956 ----
   	long msize;
   	XSizeHints size;
   
@@ -3796,7 +3804,7 @@
   	arrange(selmon);
   }
   
---- 1950,1973 ----
+--- 1958,1981 ----
   updatewmhints(Client *c) {
   	XWMHints *wmh;
   
@@ -3895,7 +3903,7 @@
   			return;
   	detach(c);
   	attach(c);
---- 1976,2042 ----
+--- 1984,2050 ----
   	Client *c;
   	Monitor *m;
   
@@ -3979,7 +3987,7 @@
   		die("dwm: cannot open display\n");
   	checkotherwm();
   	setup();
---- 2045,2058 ----
+--- 2053,2066 ----
   }
   
   int
