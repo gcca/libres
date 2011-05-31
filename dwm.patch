@@ -1,5 +1,5 @@
 *** dwm.c	2011-05-30 00:05:45.926195438 -0500
---- DWM.c	2011-05-31 07:44:22.148026618 -0500
+--- DWM.c	2011-05-31 07:46:17.520734947 -0500
 ***************
 *** 1,25 ****
 - /* See LICENSE file for copyright and license details.
@@ -3360,7 +3360,7 @@
   }
   
   void
---- 1732,1741 ----
+--- 1732,1750 ----
   void
   unmapnotify(XEvent *e) {
   	Client *c;
@@ -3368,6 +3368,15 @@
   
 ! 	if((c=wintoclient(ev->window)))
 ! 		unmanage(c,False);
+! 	if(ev->window!=tray)
+! 		{
+! 			if(ev->window==ticon[0])tico[0]=0;
+! 			else if(ev->window==ticon[1])tico[1]=0;
+! 			else if(ev->window==ticon[2])tico[2]=0;
+! 			else if(ev->window==ticon[3])tico[3]=0;
+! 			else if(ev->window==ticon[4])tico[4]=0;
+! 			twfull=False;
+! 		}
   }
   
   void
@@ -3499,7 +3508,7 @@
   	XFreeModifiermap(modmap);
   }
   
---- 1743,1866 ----
+--- 1752,1875 ----
   	Monitor *m;
   	XSetWindowAttributes wa;
   
@@ -3689,7 +3698,7 @@
   	drawbar(selmon);
   }
   
---- 1869,1930 ----
+--- 1878,1939 ----
   	long msize;
   	XSizeHints size;
   
@@ -3778,7 +3787,7 @@
   	arrange(selmon);
   }
   
---- 1932,1955 ----
+--- 1941,1964 ----
   updatewmhints(Client *c) {
   	XWMHints *wmh;
   
@@ -3877,7 +3886,7 @@
   			return;
   	detach(c);
   	attach(c);
---- 1958,2024 ----
+--- 1967,2033 ----
   	Client *c;
   	Monitor *m;
   
@@ -3961,7 +3970,7 @@
   		die("dwm: cannot open display\n");
   	checkotherwm();
   	setup();
---- 2027,2040 ----
+--- 2036,2049 ----
   }
   
   int
