@@ -1,5 +1,5 @@
 *** dwm.c	2011-05-30 00:05:45.926195438 -0500
---- DWM.c	2011-05-30 00:49:25.032006523 -0500
+--- DWM.c	2011-05-30 21:25:07.881007032 -0500
 ***************
 *** 38,67 ****
   #include <X11/Xutil.h>
@@ -1064,7 +1064,7 @@
   	}
   	return m;
   }
---- 553,680 ----
+--- 553,686 ----
   configurerequest(XEvent *e) {
   	Client *c;
   	Monitor *m;
@@ -1133,6 +1133,12 @@
 ! 	clsHint->res_name="tray";
 ! 	XSetClassHint(dpy,traywin,clsHint);
 ! 	XFree(clsHint);
+! 	if(!(wmHints=XAllocWMHints()))die("error: wmHints\n");
+! 	wmHints->flags=StateHint|WindowGroupHint|IconWindowHint;
+! 	wmHints->initial_state=WithdrawnState;
+! 	wmHints->window_group=traywin;
+! 	XSetWMHints(dpy,traywin,wmHints);
+! 	XFree(wmHints);
   
   	return m;
   }
@@ -1318,7 +1324,7 @@
   		focus(c);
   	else
   		focus(NULL);
---- 682,803 ----
+--- 688,809 ----
   void
   drawbar(Monitor *m) {
   	int x;
@@ -1519,7 +1525,7 @@
   	}
   	if(c) {
   		focus(c);
---- 806,880 ----
+--- 812,886 ----
   void
   expose(XEvent *e) {
   	Monitor *m;
@@ -1681,7 +1687,7 @@
   	}
   }
   
---- 884,967 ----
+--- 890,973 ----
   
   unsigned long
   getcolor(const char *colstr) {
@@ -1798,7 +1804,7 @@
   		XFreeStringList(missing);
   	}
   	if(dc.font.set) {
---- 969,998 ----
+--- 975,1004 ----
   grabkeys(void) {
   	updatenumlockmask();
   	{
@@ -1866,7 +1872,7 @@
   		XFree(protocols);
   	}
   	return ret;
---- 1000,1034 ----
+--- 1006,1040 ----
   		XFontStruct **xfonts;
   		char **font_names;
   
@@ -1920,7 +1926,7 @@
   
   void
   keypress(XEvent *e) {
---- 1036,1051 ----
+--- 1042,1057 ----
   
   #ifdef XINERAMA
   static Bool
@@ -1951,7 +1957,7 @@
   			keys[i].func(&(keys[i].arg));
   }
   
---- 1053,1064 ----
+--- 1059,1070 ----
   	KeySym keysym;
   	XKeyEvent *ev;
   
@@ -2110,7 +2116,7 @@
   		switch (ev.type) {
   		case ConfigureRequest:
   		case Expose:
---- 1069,1210 ----
+--- 1075,1216 ----
   	if(!selmon->sel)
   		return;
   	if(isprotodel(selmon->sel)) {
@@ -2302,7 +2308,7 @@
   			return m;
   	return selmon;
   }
---- 1212,1258 ----
+--- 1218,1264 ----
   			handler[ev.type](&ev);
   			break;
   		case MotionNotify:
@@ -2370,7 +2376,7 @@
   				arrange(c->mon);
   			break;
   		case XA_WM_NORMAL_HINTS:
---- 1261,1278 ----
+--- 1267,1284 ----
   propertynotify(XEvent *e) {
   	Client *c;
   	Window trans;
@@ -2400,7 +2406,7 @@
   				drawbar(c->mon);
   		}
   	}
---- 1283,1291 ----
+--- 1289,1297 ----
   			drawbars();
   			break;
   		}
@@ -2493,7 +2499,7 @@
   		switch(ev.type) {
   		case ConfigureRequest:
   		case Expose:
---- 1293,1373 ----
+--- 1299,1379 ----
   
   void
   clientmessage(XEvent *e) {
@@ -2603,7 +2609,7 @@
   		focus(NULL);
   	}
   }
---- 1375,1400 ----
+--- 1381,1406 ----
   			handler[ev.type](&ev);
   			break;
   		case MotionNotify:
@@ -2684,7 +2690,7 @@
   		}
   		if(wins)
   			XFree(wins);
---- 1408,1458 ----
+--- 1414,1464 ----
   	drawbar(m);
   	if(!m->sel)
   		return;
@@ -2752,7 +2758,7 @@
   	attach(c);
   	attachstack(c);
   	focus(NULL);
---- 1460,1473 ----
+--- 1466,1479 ----
   }
   
   void
@@ -2806,7 +2812,7 @@
   	arrange(selmon);
   }
   
---- 1475,1510 ----
+--- 1481,1516 ----
   }
   
   void
@@ -2899,7 +2905,7 @@
   	grabkeys();
   }
   
---- 1512,1558 ----
+--- 1518,1564 ----
   setup(void) {
   	XSetWindowAttributes wa;
   
@@ -2983,7 +2989,7 @@
   		perror(" failed");
   		exit(0);
   	}
---- 1560,1593 ----
+--- 1566,1599 ----
   showhide(Client *c) {
   	if(!c)
   		return;
@@ -3085,7 +3091,7 @@
   	arrange(selmon);
   }
   
---- 1595,1656 ----
+--- 1601,1662 ----
   
   void
   tag(const Arg *arg) {
@@ -3160,7 +3166,7 @@
   	arrange(selmon);
   }
   
---- 1658,1667 ----
+--- 1664,1673 ----
   togglefloating(const Arg *arg) {
   	if(!selmon->sel)
   		return;
@@ -3222,7 +3228,7 @@
   		XSetErrorHandler(xerror);
   		XUngrabServer(dpy);
   	}
---- 1671,1718 ----
+--- 1677,1724 ----
   
   	if(!selmon->sel)
   		return;
@@ -3283,7 +3289,7 @@
   }
   
   void
---- 1724,1733 ----
+--- 1730,1739 ----
   void
   unmapnotify(XEvent *e) {
   	Client *c;
@@ -3422,7 +3428,7 @@
   	XFreeModifiermap(modmap);
   }
   
---- 1735,1858 ----
+--- 1741,1864 ----
   	Monitor *m;
   	XSetWindowAttributes wa;
   
@@ -3612,7 +3618,7 @@
   	drawbar(selmon);
   }
   
---- 1861,1922 ----
+--- 1867,1928 ----
   	long msize;
   	XSizeHints size;
   
@@ -3701,7 +3707,7 @@
   	arrange(selmon);
   }
   
---- 1924,1947 ----
+--- 1930,1953 ----
   updatewmhints(Client *c) {
   	XWMHints *wmh;
   
@@ -3800,7 +3806,7 @@
   			return;
   	detach(c);
   	attach(c);
---- 1950,2016 ----
+--- 1956,2022 ----
   	Client *c;
   	Monitor *m;
   
@@ -3884,7 +3890,7 @@
   		die("dwm: cannot open display\n");
   	checkotherwm();
   	setup();
---- 2019,2032 ----
+--- 2025,2038 ----
   }
   
   int
