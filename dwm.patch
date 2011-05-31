@@ -1,5 +1,5 @@
 *** dwm.c	2011-05-30 00:05:45.926195438 -0500
---- DWM.c	2011-05-31 07:55:28.497750062 -0500
+--- DWM.c	2011-05-31 07:59:52.969650593 -0500
 ***************
 *** 1,25 ****
 - /* See LICENSE file for copyright and license details.
@@ -2518,7 +2518,7 @@
 ! 			c->isfloating = 1;
 ! 			resizeclient(c, c->mon->mx, c->mon->my, c->mon->mw, c->mon->mh);
 ! 			XRaiseWindow(dpy, c->win);
-! 		}
+  		}
 ! 		else {
 ! 			XChangeProperty(dpy, cme->window, netatom[NetWMState], XA_ATOM, 32,
 ! 			                PropModeReplace, (unsigned char*)0, 0);
@@ -2581,7 +2581,7 @@
   		switch(ev.type) {
   		case ConfigureRequest:
   		case Expose:
---- 1312,1392 ----
+--- 1312,1418 ----
   
   void
   clientmessage(XEvent *e) {
@@ -2613,6 +2613,32 @@
 ! 				resizeclient(c,c->x,c->y,c->w,c->h);
 ! 				arrange(c->mon);
 ! 			}
+  		}
+! 	if(e->xclient.message_type==atom_cop&&!cme->data.l[1])
+! 		{
+! 			int d;
+! 			XEvent xev;
+! 
+! 			if(twfull)return;
+! 			if(!tico[0]){d=0;tico[0]=cme->data.l[2];}
+! 			else if(!tico[1]){d=1;tico[1]=cme->data.l[2];}
+! 			else if(!tico[2]){d=2;tico[2]=cme->data.l[2];}
+! 			else if(!tico[3]){d=3;tico[3]=cme->data.l[2];}
+! 			else if(!tico[4]){d=4;tico[4]=cme->data.l[2];}					
+! 			else{twfull=True;return;}
+! 			XReparentWindow(dpy,cme->data.l[2],mons->traywin,4+(16*d),1);
+! 			XResizeWindow(dpy,cme->data.l[2],13,13);
+! 			XMapRaised(dpy,cme->data.l[2]);
+! 			xev.xclient.window=cme->data.l[2];
+! 			xev.xclient.type=ClientMessage;
+! 			xev.xclient.message_type=XInternAtom(dpy,"_XEMBED",False);
+! 			xev.xclient.format=32;
+! 			xev.xclient.data.l[0]=CurrentTime;
+! 			xev.xclient.data.l[1]=0;
+! 			xev.xclient.data.l[2]=0;
+! 			xev.xclient.data.l[3]=mons->traywin;
+! 			xev.xclient.data.l[4]=0;
+! 			XSendEvent(dpy,root,False,NoEventMask,&xev);
   		}
   }
   
@@ -2691,7 +2717,7 @@
   		focus(NULL);
   	}
   }
---- 1394,1419 ----
+--- 1420,1445 ----
   			handler[ev.type](&ev);
   			break;
   		case MotionNotify:
@@ -2772,7 +2798,7 @@
   		}
   		if(wins)
   			XFree(wins);
---- 1427,1477 ----
+--- 1453,1503 ----
   	drawbar(m);
   	if(!m->sel)
   		return;
@@ -2840,7 +2866,7 @@
   	attach(c);
   	attachstack(c);
   	focus(NULL);
---- 1479,1498 ----
+--- 1505,1524 ----
   }
   
   void
@@ -2900,7 +2926,7 @@
   	arrange(selmon);
   }
   
---- 1500,1535 ----
+--- 1526,1561 ----
   }
   
   void
@@ -2993,7 +3019,7 @@
   	grabkeys();
   }
   
---- 1537,1583 ----
+--- 1563,1609 ----
   setup(void) {
   	XSetWindowAttributes wa;
   
@@ -3077,7 +3103,7 @@
   		perror(" failed");
   		exit(0);
   	}
---- 1585,1618 ----
+--- 1611,1644 ----
   showhide(Client *c) {
   	if(!c)
   		return;
@@ -3179,7 +3205,7 @@
   	arrange(selmon);
   }
   
---- 1620,1681 ----
+--- 1646,1707 ----
   
   void
   tag(const Arg *arg) {
@@ -3254,7 +3280,7 @@
   	arrange(selmon);
   }
   
---- 1683,1692 ----
+--- 1709,1718 ----
   togglefloating(const Arg *arg) {
   	if(!selmon->sel)
   		return;
@@ -3316,7 +3342,7 @@
   		XSetErrorHandler(xerror);
   		XUngrabServer(dpy);
   	}
---- 1696,1743 ----
+--- 1722,1769 ----
   
   	if(!selmon->sel)
   		return;
@@ -3377,7 +3403,7 @@
   }
   
   void
---- 1749,1767 ----
+--- 1775,1793 ----
   void
   unmapnotify(XEvent *e) {
   	Client *c;
@@ -3525,7 +3551,7 @@
   	XFreeModifiermap(modmap);
   }
   
---- 1769,1892 ----
+--- 1795,1918 ----
   	Monitor *m;
   	XSetWindowAttributes wa;
   
@@ -3715,7 +3741,7 @@
   	drawbar(selmon);
   }
   
---- 1895,1956 ----
+--- 1921,1982 ----
   	long msize;
   	XSizeHints size;
   
@@ -3804,7 +3830,7 @@
   	arrange(selmon);
   }
   
---- 1958,1981 ----
+--- 1984,2007 ----
   updatewmhints(Client *c) {
   	XWMHints *wmh;
   
@@ -3903,7 +3929,7 @@
   			return;
   	detach(c);
   	attach(c);
---- 1984,2050 ----
+--- 2010,2076 ----
   	Client *c;
   	Monitor *m;
   
@@ -3987,7 +4013,7 @@
   		die("dwm: cannot open display\n");
   	checkotherwm();
   	setup();
---- 2053,2066 ----
+--- 2079,2092 ----
   }
   
   int
