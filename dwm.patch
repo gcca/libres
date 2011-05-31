@@ -1,5 +1,5 @@
 *** dwm.c	2011-05-30 00:05:45.926195438 -0500
---- DWM.c	2011-05-31 07:30:17.032605003 -0500
+--- DWM.c	2011-05-31 07:33:58.094740548 -0500
 ***************
 *** 1,25 ****
 - /* See LICENSE file for copyright and license details.
@@ -1112,7 +1112,7 @@
   	}
   	return m;
   }
---- 532,683 ----
+--- 532,686 ----
   configurerequest(XEvent *e) {
   	Client *c;
   	Monitor *m;
@@ -1174,22 +1174,22 @@
 ! 	m->lt[1]=&layouts[1%LENGTH(layouts)];
 ! 	strncpy(m->ltsymbol,layouts[0].symbol,sizeof m->ltsymbol);
 ! 
-! 	traywin=XCreateSimpleWindow(dpy,selmon->barwin,selmon->ww-129,
+! 	m->traywin=XCreateSimpleWindow(dpy,selmon->barwin,selmon->ww-129,
 ! 															0,92,bh,0,0x6f6f6f6f,0x6f6f6f6f);
 ! 	if(!(clsHint=XAllocClassHint()))die("error: clsHint\n");
 ! 	clsHint->res_class="tray";
 ! 	clsHint->res_name="tray";
-! 	XSetClassHint(dpy,traywin,clsHint);
+! 	XSetClassHint(dpy,m->traywin,clsHint);
 ! 	XFree(clsHint);
 ! 	if(!(wmHints=XAllocWMHints()))die("error: wmHints\n");
 ! 	wmHints->flags=StateHint|WindowGroupHint|IconWindowHint;
 ! 	wmHints->initial_state=WithdrawnState;
-! 	wmHints->window_group=traywin;
-! 	XSetWMHints(dpy,traywin,wmHints);
+! 	wmHints->window_group=m->traywin;
+! 	XSetWMHints(dpy,m->traywin,wmHints);
 ! 	XFree(wmHints);
 ! 	atom_sel=XInternAtom(dpy,"_NET_SYSTEM_TRAY_S0",False);
-! 	XSetSelectionOwner(dpy,atom_sel,traywin,CurrentTime);
-! 	if(XGetSelectionOwner(dpy,atom_sel)==traywin)
+! 	XSetSelectionOwner(dpy,atom_sel,m->traywin,CurrentTime);
+! 	if(XGetSelectionOwner(dpy,atom_sel)==m->traywin)
 !     {
 !       XClientMessageEvent e;
 !       e.type=ClientMessage;
@@ -1205,6 +1205,9 @@
 !       atom_cop=XInternAtom (dpy,"_NET_SYSTEM_TRAY_OPCODE",False);
 !       atom_dat=XInternAtom(dpy,"_NET_SYSTEM_TRAY_MESSAGE_DATA",False);
 !     }
+! 	XSelectInput(dpy,m->traywin,SubstructureNotifyMask);
+! 	XMapRaised(dpy,m->traywin);
+! 	XFlush(dpy);
   
   	return m;
   }
@@ -1390,7 +1393,7 @@
   		focus(c);
   	else
   		focus(NULL);
---- 685,806 ----
+--- 688,809 ----
   void
   drawbar(Monitor *m) {
   	int x;
@@ -1591,7 +1594,7 @@
   	}
   	if(c) {
   		focus(c);
---- 809,883 ----
+--- 812,886 ----
   void
   expose(XEvent *e) {
   	Monitor *m;
@@ -1753,7 +1756,7 @@
   	}
   }
   
---- 887,970 ----
+--- 890,973 ----
   
   unsigned long
   getcolor(const char *colstr) {
@@ -1870,7 +1873,7 @@
   		XFreeStringList(missing);
   	}
   	if(dc.font.set) {
---- 972,1001 ----
+--- 975,1004 ----
   grabkeys(void) {
   	updatenumlockmask();
   	{
@@ -1938,7 +1941,7 @@
   		XFree(protocols);
   	}
   	return ret;
---- 1003,1037 ----
+--- 1006,1040 ----
   		XFontStruct **xfonts;
   		char **font_names;
   
@@ -1992,7 +1995,7 @@
   
   void
   keypress(XEvent *e) {
---- 1039,1054 ----
+--- 1042,1057 ----
   
   #ifdef XINERAMA
   static Bool
@@ -2023,7 +2026,7 @@
   			keys[i].func(&(keys[i].arg));
   }
   
---- 1056,1067 ----
+--- 1059,1070 ----
   	KeySym keysym;
   	XKeyEvent *ev;
   
@@ -2182,7 +2185,7 @@
   		switch (ev.type) {
   		case ConfigureRequest:
   		case Expose:
---- 1072,1213 ----
+--- 1075,1216 ----
   	if(!selmon->sel)
   		return;
   	if(isprotodel(selmon->sel)) {
@@ -2374,7 +2377,7 @@
   			return m;
   	return selmon;
   }
---- 1215,1261 ----
+--- 1218,1264 ----
   			handler[ev.type](&ev);
   			break;
   		case MotionNotify:
@@ -2442,7 +2445,7 @@
   				arrange(c->mon);
   			break;
   		case XA_WM_NORMAL_HINTS:
---- 1264,1281 ----
+--- 1267,1284 ----
   propertynotify(XEvent *e) {
   	Client *c;
   	Window trans;
@@ -2472,7 +2475,7 @@
   				drawbar(c->mon);
   		}
   	}
---- 1286,1294 ----
+--- 1289,1297 ----
   			drawbars();
   			break;
   		}
@@ -2565,7 +2568,7 @@
   		switch(ev.type) {
   		case ConfigureRequest:
   		case Expose:
---- 1296,1376 ----
+--- 1299,1379 ----
   
   void
   clientmessage(XEvent *e) {
@@ -2675,7 +2678,7 @@
   		focus(NULL);
   	}
   }
---- 1378,1403 ----
+--- 1381,1406 ----
   			handler[ev.type](&ev);
   			break;
   		case MotionNotify:
@@ -2756,7 +2759,7 @@
   		}
   		if(wins)
   			XFree(wins);
---- 1411,1461 ----
+--- 1414,1464 ----
   	drawbar(m);
   	if(!m->sel)
   		return;
@@ -2824,7 +2827,7 @@
   	attach(c);
   	attachstack(c);
   	focus(NULL);
---- 1463,1476 ----
+--- 1466,1479 ----
   }
   
   void
@@ -2878,7 +2881,7 @@
   	arrange(selmon);
   }
   
---- 1478,1513 ----
+--- 1481,1516 ----
   }
   
   void
@@ -2971,7 +2974,7 @@
   	grabkeys();
   }
   
---- 1515,1561 ----
+--- 1518,1564 ----
   setup(void) {
   	XSetWindowAttributes wa;
   
@@ -3055,7 +3058,7 @@
   		perror(" failed");
   		exit(0);
   	}
---- 1563,1596 ----
+--- 1566,1599 ----
   showhide(Client *c) {
   	if(!c)
   		return;
@@ -3157,7 +3160,7 @@
   	arrange(selmon);
   }
   
---- 1598,1659 ----
+--- 1601,1662 ----
   
   void
   tag(const Arg *arg) {
@@ -3232,7 +3235,7 @@
   	arrange(selmon);
   }
   
---- 1661,1670 ----
+--- 1664,1673 ----
   togglefloating(const Arg *arg) {
   	if(!selmon->sel)
   		return;
@@ -3294,7 +3297,7 @@
   		XSetErrorHandler(xerror);
   		XUngrabServer(dpy);
   	}
---- 1674,1721 ----
+--- 1677,1724 ----
   
   	if(!selmon->sel)
   		return;
@@ -3355,7 +3358,7 @@
   }
   
   void
---- 1727,1736 ----
+--- 1730,1739 ----
   void
   unmapnotify(XEvent *e) {
   	Client *c;
@@ -3494,7 +3497,7 @@
   	XFreeModifiermap(modmap);
   }
   
---- 1738,1861 ----
+--- 1741,1864 ----
   	Monitor *m;
   	XSetWindowAttributes wa;
   
@@ -3684,7 +3687,7 @@
   	drawbar(selmon);
   }
   
---- 1864,1925 ----
+--- 1867,1928 ----
   	long msize;
   	XSizeHints size;
   
@@ -3773,7 +3776,7 @@
   	arrange(selmon);
   }
   
---- 1927,1950 ----
+--- 1930,1953 ----
   updatewmhints(Client *c) {
   	XWMHints *wmh;
   
@@ -3872,7 +3875,7 @@
   			return;
   	detach(c);
   	attach(c);
---- 1953,2019 ----
+--- 1956,2022 ----
   	Client *c;
   	Monitor *m;
   
@@ -3956,7 +3959,7 @@
   		die("dwm: cannot open display\n");
   	checkotherwm();
   	setup();
---- 2022,2035 ----
+--- 2025,2038 ----
   }
   
   int
