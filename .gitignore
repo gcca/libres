@@ -11,3 +11,8 @@ Makefile.in
 /depcomp
 /install-sh
 /missing
+
+.bzr
+*~*~
+*.pyc
+*.pyo
