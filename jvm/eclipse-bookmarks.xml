@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bookmarks>
+   <site url="http://bzreclipse.org/update-site" selected="true" name="Bzr"/>
+   <site url="http://eclipse-color-theme.github.com/update" selected="true" name="Color Theme"/>
+   <site url="http://download.eclipse.org/releases/kepler" selected="true" name="Kepler"/>
+   <site url="http://winterwell.com/software/updatesite" selected="true" name="Markdown"/>
+   <site url="http://pydev.org/updates" selected="true" name="PyDev"/>
+   <site url="http://download.scala-ide.org/sdk/e38/scala210/stable/site" selected="true" name="ScalaIDE"/>
+   <site url="http://download.eclipse.org/eclipse/updates/4.3" selected="true" name="The Eclipse Project Updates"/>
+   <site url="https://raw.github.com/jeeeyul/eclipse-themes/master/net.jeeeyul.eclipse.themes.updatesite" selected="true" name="Theme jeeeyul"/>
+</bookmarks>
