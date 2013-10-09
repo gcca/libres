@@ -1,0 +1,12 @@
+<Context debug="99">
+  <Realm className="org.apache.catalina.realm.JDBCRealm" debug="99"
+		 driverName="org.postgresql.Driver"
+		 connectionURL="jdbc:postgresql://localhost:5432/postgres"
+		 connectionName="postgres"
+		 connectionPassword="gcca"
+		 userTable="md_user"
+		 userNameCol="user_name"
+		 userCredCol="user_pass"
+		 userRoleTable="md_user_role"
+		 roleNameCol="role_name" />
+</Context>
