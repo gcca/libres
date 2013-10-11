@@ -457,7 +457,7 @@ BASE = os.path.dirname(__file__)
 ctx = execjs.get()
 
 # with io.open(os.path.join(BASE, 'livescript.js'), encoding='utf-8') as js:
-# 	lsc = ctx.compile(js.read())
+#   lsc = ctx.compile(js.read())
 
 lsc = ctx.compile(lsjs)
 
@@ -465,9 +465,9 @@ lsc = ctx.compile(lsjs)
 als = lambda t: lsc.call(b64decode('TGl2ZVNjcmlwdC5jb21waWxl'), t)
 
 def compilar_s(ls_c):
-	with open(ls_c, 'r') as f_ls:
-		ls = als(f_ls.read())
-	return ls
+    with open(ls_c, 'r') as f_ls:
+        ls = als(f_ls.read())
+    return ls
 
 #'(->\n%sexports = undefined\n%srequire \'%s\'(exports || %s))()'
 hsit = []
@@ -477,51 +477,53 @@ adq = b64decode('KHdpbmRvdy5nem1vZHMuJXM9KC0+CiVzO2V4cG9ydHM9e307bW9kdWxlPXtleHB
 exx = b64decode('d2luZG93Lmd6bW9kcy4=')
 une = b64decode('d2luZG93Lmd6bW9kcz1uZXcgT2JqZWN0Cg==')
 def compilar_mods(ls_c, gblmod = True):
-	with open(ls_c, 'r') as f_ls:
-		ls = f_ls.read()
-		if gblmod:
-			ls = une + ls
-			#ls = 'window.gzmods=new Object\n' + ls
+    with open(ls_c, 'r') as f_ls:
+        ls = f_ls.read()
+        if gblmod:
+            ls = une + ls
+            #ls = 'window.gzmods=new Object\n' + ls
 
-	mods = re.findall(r'(.*) = require \'(.*)\'', ls)
+    mods = re.findall(r'(.*) = require \'(.*)\'', ls)
 
-	for mod_var, mod_c in mods:
-		abme = os.path.abspath(mod_c + '.ls')
-		#abme = 'gz$' + abme.replace('/', '$').replace('\\', '$')
-		abme = ''.join(c for c in abme if c.isalpha() or c is '$')
-		if abme in hsit:
-			ls = ls.replace('require \'%s\'' % mod_c, exx + abme)
-			#ls = ls.replace('require \'%s\'' % mod_c, 'window.gzmods.' + hsit[mod_c])
-			continue
-		else:
-			hsit.append(abme)
+    for mod_var, mod_c in mods:
+        abme = os.path.abspath(mod_c + '.ls')
+        #abme = 'gz$' + abme.replace('/', '$').replace('\\', '$')
+        print('%s - %s - %s' % (mod_c, abme, ls_c))
+        abme = ''.join(c for c in abme if c.isalpha() or c is '$')
 
-		i = '    ' * mod_var.count(' ') + '    '
-		#ls = ls.replace('require \'%s\'' % mod_c, adq % (abme, i, i, mod_c, mod_var.lstrip()))
-		ls = ls.replace('require \'%s\'' % mod_c, adq % (abme, i, i, mod_c, i))
+        if abme in hsit:
+            ls = ls.replace('require \'%s\'' % mod_c, exx + abme)
+            #ls = ls.replace('require \'%s\'' % mod_c, 'window.gzmods.' + hsit[mod_c])
+            continue
+        else:
+            hsit.append(abme)
+
+        i = '    ' * mod_var.count(' ') + '    '
+        #ls = ls.replace('require \'%s\'' % mod_c, adq % (abme, i, i, mod_c, mod_var.lstrip()))
+        ls = ls.replace('require \'%s\'' % mod_c, adq % (abme, i, i, mod_c, i))
 #b64decode('KC0+CiVzZXhwb3J0cyA9IHVuZGVmaW5lZAolc3JlcXVpcmUgJyVzJyhleHBvcnRzIHx8ICVzKSkoKQ==')
 
 
-	mods = re.findall(r'(.*)require \'(.*)\'' , ls)
+    mods = re.findall(r'(.*)require \'(.*)\'' , ls)
 
-	ls_cdir = os.path.dirname(ls_c)
+    ls_cdir = os.path.dirname(ls_c)
 
-	for i, mod in mods:
-		ls_mod = os.path.join(ls_cdir, mod)
+    for i, mod in mods:
+        ls_mod = os.path.join(ls_cdir, mod)
 
-		ls_e = compilar_mods(ls_mod + '.ls', False)
+        ls_e = compilar_mods(ls_mod + '.ls', False)
 
-		ls_e = '\n'.join([ i + l for l in ls_e.split('\n') ])
+        ls_e = '\n'.join([ i + l for l in ls_e.split('\n') ])
 
-		ls = ls.replace(i + ('require \'%s\'' % mod), ls_e)
+        ls = ls.replace(i + ('require \'%s\'' % mod), ls_e)
 
-	return ls
+    return ls
 
 compilar = lambda ls_c: als(compilar_mods(ls_c))
 
 if '__main__' == __name__:
-	if 2 > len(sys.argv):
-		print('lsc.py <fichero.ls>')
-		sys.exit(0)
+    if 2 > len(sys.argv):
+        print('lsc.py <fichero.ls>')
+        sys.exit(0)
 
-	print(compilar(sys.argv[1]).encode('utf-8'))
+    print(compilar(sys.argv[1]).encode('utf-8'))
