@@ -28,7 +28,21 @@ class ItemView extends gz.GView
         @model.bind \remove, @unrender, @
 
     render : ->
-        $(@el).html "<span style='color:black;'>#{@model.get \nombre} #{@model.get \apellido}</span> &nbsp; &nbsp; <span class='swap' style='font-family:sans-serif; color:blue; cursor:pointer;'>[swap]</span> <span class='delete' style='cursor:pointer; color:red; font-family:sans-serif;'>[delete]</span>"
+        $(@el).html "
+            <span style='color:black;'>
+              #{@model.get \nombre} #{@model.get \apellido}
+            </span>
+            &nbsp; &nbsp;
+            <span class='swap' style='font-family:sans-serif;
+                                      color:blue;
+                                      cursor:pointer;'>
+              [swap]
+            </span>
+            <span class='delete' style='cursor:pointer;
+                                        color:red;
+                                        font-family:sans-serif;'>
+              [delete]
+            </span>"
         @  # para invocaciones en cadena: *.render().el
 
     unrender : ->
