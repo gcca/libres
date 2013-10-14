@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link type="text/css" rel="stylesheet" href="/static/main.css" />
+
+	<script src="https://towtruck.mozillalabs.com/towtruck.js"></script>
+	<title>gcca | Wiki</title>
+</head>
+
+<body>
+	<div class="login-area">
+		{% if user %}
+			{{user.name}} (<a class="login-link" href="/logout">logout</a>)
+		{% else %}
+			<a class="login-link" href="/login">login</a>
+			|
+			<a class="login-link" href="/signup">signup</a>
+		{% endif %}
+	</div>
+
+	<div id="content">
+	<button onclick="TowTruck(this); return false;">Start TowTruck</button>
+	{% block content %}
+	{% endblock %}
+	</div>
+</body>
+
+</html>
+{# vim: tabstop=2 shiftwidth=2 softtabstop=2
+#}

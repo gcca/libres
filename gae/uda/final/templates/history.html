@@ -1,0 +1,44 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/main.css">
+
+	<title> gcca | Wiki </title>
+</head>
+<body>
+
+	<div class="login-area">
+		{% if page and user %}
+			<a class="login-link" href="/_edit{{path}}">edit</a>
+			|
+			<a class="login-link" href="/_history{{path}}">history</a>
+		{% endif%}
+
+		&nbsp;&nbsp;
+
+		{% if user %}
+			{{user.name}} (<a class="login-link" href="/logout">logout</a>)
+		{% else %}
+			<a class="login-link" href="/login">login</a>
+			|
+			<a class="login-link" href="/signup">signup</a>
+		{% endif %}
+	</div>
+
+	<br>
+	<br>
+	<br>
+
+	<table>
+		{% for post in posts %}
+			<tr>
+				<td>{{post.last_modified.strftime('%b %d, %Y')}}</td>
+				<td>{{post.content}}</td>
+				<td>
+					<a href="{{path}}?v={{post.key().id()}}">view</a>
+					<a href="/_edit{{path}}?v={{post.key().id()}}">edit</a>
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+</body>
+</html>

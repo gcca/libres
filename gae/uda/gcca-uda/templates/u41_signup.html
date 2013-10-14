@@ -1,0 +1,37 @@
+<html>
+<head>
+		<title>/gcca - Signup/</title>
+		<link rel="stylesheet" type="text/css" href="/static/main.css">
+</head>
+<body>
+
+	<form method="post">
+		<table>
+			<tr>
+				<td>Username</td>
+				<td><input type="text" name="username" value="{{ username }}"></td>
+				<td><span style="color:red">{{ error_username }}</span></td>
+			</tr>
+			<tr>
+				<td>Password</td>
+				<td><input type="password" name="password"></td>
+				<td><span style="color:red">{{ error_password }}</span></td>
+			</tr>
+
+			<tr>
+				<td>Verify Password</td>
+				<td><input type="password" name="verify"></td>
+				<td><span style="color:red">{{ error_verify }}</span></td>
+			</tr>
+
+			<tr>
+				<td>Email (optional)</td>
+				<td><input type="text" name="email" value="{{ email }}"></td>
+				<td><span style="color:red">{{ error_email }}</span></td>
+			</tr>
+		</table>
+		<input type="submit">
+	</form>
+
+</body>
+</html>

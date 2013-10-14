@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>/gcca - Blog/</title>
+	<link rel="stylesheet" type="text/css" href="/static/u31_main.css">
+</head>
+<body>
+
+	<a href="/u3/1/blog" class="main-title">/gcca - Blog/</a>
+
+	{% for post in posts %}
+	<div class="post">
+		<div class="post-heading">
+			<a href="/u3/1/blog/{{ post.key().id() }}" class="post-title">
+				{{ post.subject }}</a>
+			<div class="post-date">{{ post.created.strftime('%b %d, %Y') }}</div>
+		</div>
+		<div class="post-content">{{ post.content }}</div>
+		<br><br>
+	<div>
+	{% endfor %}
+
+</body>
+</html>

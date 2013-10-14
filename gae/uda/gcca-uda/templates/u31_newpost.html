@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>/gcca - Blog/</title>
+	<link rel="stylesheet" type="text/css" href="/static/u31_main.css">
+</head>
+<body>
+
+	<h1>/gcca - Blog/</h1>
+
+	<h2>new post</h2>
+
+	<form method="post">
+		<label>
+			<div>subject</div>
+			<input type="text" name="subject" value={{ subject }}>
+		</label>
+		<label>
+			<div>blog</div> <textarea name="content">{{ content }}</textarea>
+		</label>
+		<div class="error">{{ error }}</div>
+		<input type="submit">
+	</form>
+
+</body>
+</html>
