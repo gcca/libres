@@ -3,7 +3,7 @@
 import sys
 import os
 from codecs import open
-from base64 import b64decode
+from base64 import b64decode as bde
 import argparse
 import lsc
 import lessc
@@ -117,24 +117,24 @@ else:
         # }
 
         map_compresor =  {
-           '.js' : b64decode('amF2YSAtamFyICUoY29tcHJlc29yKXMgLS1sYW5ndWFnZV9pbiBFQ01BU0NSSVBUNV9TVFJJQ1QgLS1jb21waWxhdGlvbl9sZXZlbCAlKG5pdmVsKXMgLS1wcm9jZXNzX2Nsb3N1cmVfcHJpbWl0aXZlcyAtLWpzICUobWFwYSlzIC0tanMgJShlbnRyYWRhKXMgLS1qc19vdXRwdXRfZmlsZSAlKHNhbGlkYSlz'),
+           '.js' : bde('amF2YSAtamFyICUoY29tcHJlc29yKXMgLS1sYW5ndWFnZV9pbiBFQ01BU0NSSVBUNV9TVFJJQ1QgLS1jb21waWxhdGlvbl9sZXZlbCAlKG5pdmVsKXMgLS1wcm9jZXNzX2Nsb3N1cmVfcHJpbWl0aXZlcyAtLWpzICUobWFwYSlzIC0tanMgJShlbnRyYWRhKXMgLS1qc19vdXRwdXRfZmlsZSAlKHNhbGlkYSlz'),
 
-           '.css' : b64decode('amF2YSAtamFyICUoY29tcHJlc29yKXMgLS1vdXRwdXQtZmlsZSAlKHNhbGlkYSlzIC0tb3V0cHV0LXJlbmFtaW5nLW1hcC1mb3JtYXQgQ0xPU1VSRV9DT01QSUxFRCAtLXJlbmFtZSAlKG5pdmVsKXMgLS1vdXRwdXQtcmVuYW1pbmctbWFwICUobWFwYSlzIC0tYWxsb3ctdW5yZWNvZ25pemVkLWZ1bmN0aW9ucyAtLWFsbG93LXVucmVjb2duaXplZC1wcm9wZXJ0aWVzICUoZW50cmFkYSlz')
+           '.css' : bde('amF2YSAtamFyICUoY29tcHJlc29yKXMgLS1vdXRwdXQtZmlsZSAlKHNhbGlkYSlzIC0tb3V0cHV0LXJlbmFtaW5nLW1hcC1mb3JtYXQgQ0xPU1VSRV9DT01QSUxFRCAtLXJlbmFtZSAlKG5pdmVsKXMgLS1vdXRwdXQtcmVuYW1pbmctbWFwICUobWFwYSlzIC0tYWxsb3ctdW5yZWNvZ25pemVkLWZ1bmN0aW9ucyAtLWFsbG93LXVucmVjb2duaXplZC1wcm9wZXJ0aWVzICUoZW50cmFkYSlz')
         }
 
         #if args.depurar:
             #map_nivel_compresor = {
                 ## '.js'  : 'WHITESPACE_ONLY --formatting PRETTY_PRINT --debug',
-                #'.js'    : b64decode('V0hJVEVTUEFDRV9PTkxZIC0tZm9ybWF0dGluZyBQUkVUVFlfUFJJTlQgLS1kZWJ1Zw=='),
+                #'.js'    : bde('V0hJVEVTUEFDRV9PTkxZIC0tZm9ybWF0dGluZyBQUkVUVFlfUFJJTlQgLS1kZWJ1Zw=='),
                 ##'.css' : 'DEBUG --pretty-print'
-                #'.css' : b64decode('REVCVUcgLS1wcmV0dHktcHJpbnQ=')
+                #'.css' : bde('REVCVUcgLS1wcmV0dHktcHJpbnQ=')
             #}
         #else:
         map_nivel_compresor = {
             #'.js'    : 'ADVANCED_OPTIMIZATIONS',
-            '.js'  : b64decode('QURWQU5DRURfT1BUSU1JWkFUSU9OUw=='),
+            '.js'  : bde('QURWQU5DRURfT1BUSU1JWkFUSU9OUw=='),
             #'.css' : 'CLOSURE'
-            '.css' : b64decode('Q0xPU1VSRQ==')
+            '.css' : bde('Q0xPU1VSRQ==')
         }
 
         map_ruta_compresor = {
@@ -152,20 +152,20 @@ else:
         with open(entrada_tmp_f, 'w', 'utf-8') as f_entrada:
             int_cod = depender(args.internas, dir_dependencias)
             # getCssName
-            renam = b64decode('Z29vZy5nZXRDc3NOYW1l')
+            renam = bde('Z29vZy5nZXRDc3NOYW1l')
             # Css
-            renom = b64decode('Z3ouQ3Nz')
+            renom = bde('Z3ouQ3Nz')
             f_entrada.write(int_cod + compilado.replace(renom, renam))
 
         if '.js' == sufijo:
             if args.depurar:
                 # '--formatting PRETTY_PRINT'
-                depurar = ' ' + b64decode('LS1mb3JtYXR0aW5nIFBSRVRUWV9QUklOVA==')
+                depurar = ' ' + bde('LS1mb3JtYXR0aW5nIFBSRVRUWV9QUklOVA==')
                 if '2' == args.depurar:
                     # '--debug'
-                    #depurar += ' ' + b64decode('LS1kZWJ1Zw==')
+                    #depurar += ' ' + bde('LS1kZWJ1Zw==')
                     # 'SIMPLE_OPTIMIZATIONS'
-                    nivel_compresor = b64decode('U0lNUExFX09QVElNSVpBVElPTlM=')
+                    nivel_compresor = bde('U0lNUExFX09QVElNSVpBVElPTlM=')
 
                 compresor += depurar
 
@@ -202,19 +202,19 @@ else:
             if not args.externas:
                 #args.externas.append('base')
                 args.externas = []
-            args.externas.append(b64decode('YmFzZQ=='))
+            args.externas.append(bde('YmFzZQ=='))
             with open(salida_tmp_f, 'w') as f_sal:
                 int_cod = depender(args.internas, dir_dependencias)
 
                 #with open('renaming_map.js', 'r') as f_rem:
-                #with open(b64decode('cmVuYW1pbmdfbWFwLmpz'), 'r') as f_rem:
+                #with open(bde('cmVuYW1pbmdfbWFwLmpz'), 'r') as f_rem:
                 with open(map_nom, 'r') as f_rem:
                     f_sal.write(f_rem.read() \
                                     .replace(' ', '') \
                                     .replace('\n', '')
                                 + int_cod.encode('utf-8') + compilado \
                                     #.replace('gz.Css', 'gzc.Css') \
-                                    #.replace(b64decode('Z3ouQ3Nz'), b64decode('Z3pjLkNzcw==')) \
+                                    #.replace(bde('Z3ouQ3Nz'), bde('Z3pjLkNzcw==')) \
                                     .encode('utf-8'))
         elif '.css' == sufijo:
             entrada_tmp_f = os.path.join(tmp_b, f_nom)
@@ -222,12 +222,12 @@ else:
             with open(entrada_tmp_f, 'w', 'utf-8') as f_entrada:
                 int_cod = depender(args.internas, dir_dependencias)
                 # getCssName
-                renam = b64decode('Z29vZy5nZXRDc3NOYW1l')
+                renam = bde('Z29vZy5nZXRDc3NOYW1l')
                 # Css
-                renom = b64decode('Z3ouQ3Nz')
+                renom = bde('Z3ouQ3Nz')
                 f_entrada.write(int_cod + compilado.replace(renom, renam))
 
-            compresor = b64decode('amF2YSAtamFyICUoY29tcHJlc29yKXMgLS1vdXRwdXQtZmlsZSAlKHNhbGlkYSlzIC0tb3V0cHV0LXJlbmFtaW5nLW1hcC1mb3JtYXQgQ0xPU1VSRV9DT01QSUxFRCAtLXJlbmFtZSAlKG5pdmVsKXMgLS1vdXRwdXQtcmVuYW1pbmctbWFwICUobWFwYSlzIC0tYWxsb3ctdW5yZWNvZ25pemVkLWZ1bmN0aW9ucyAtLWFsbG93LXVucmVjb2duaXplZC1wcm9wZXJ0aWVzICUoZW50cmFkYSlz')
+            compresor = bde('amF2YSAtamFyICUoY29tcHJlc29yKXMgLS1vdXRwdXQtZmlsZSAlKHNhbGlkYSlzIC0tb3V0cHV0LXJlbmFtaW5nLW1hcC1mb3JtYXQgQ0xPU1VSRV9DT01QSUxFRCAtLXJlbmFtZSAlKG5pdmVsKXMgLS1vdXRwdXQtcmVuYW1pbmctbWFwICUobWFwYSlzIC0tYWxsb3ctdW5yZWNvZ25pemVkLWZ1bmN0aW9ucyAtLWFsbG93LXVucmVjb2duaXplZC1wcm9wZXJ0aWVzICUoZW50cmFkYSlz')
             os.system(compresor % {
                 'compresor' : args.compresor_css,
                 'entrada'   : entrada_tmp_f,
@@ -247,7 +247,7 @@ else:
 
             # with open(map_nom, 'w') as map_f:
             #     #map_f.write('goog.setCssNameMapping({});')
-            #     map_f.write(b64decode('Z29vZy5zZXRDc3NOYW1lTWFwcGluZyh7fSk7'))
+            #     map_f.write(bde('Z29vZy5zZXRDc3NOYW1lTWFwcGluZyh7fSk7'))
             #     int_cod = depender(args.internas, dir_dependencias)
             #     compilado = int_cod + compilado
 
@@ -256,12 +256,12 @@ else:
 
     ext_cod = depender(args.externas, dir_dependencias) if args.externas else ''
 
-    derechos = b64decode('LyoqCiAqIENhdmFTb2Z0IFNBQyBodHRwOi8vY2F2YXNvZnRzYWMuY29tCiAqIGNyaXN0SGlhbiBHei4gKGdjY2EpIC0gaHR0cDovL2djY2EudGsKICovCg==')
+    derechos = bde('LyoqCiAqIENhdmFTb2Z0IFNBQyBodHRwOi8vY2F2YXNvZnRzYWMuY29tCiAqIGNyaXN0SGlhbiBHei4gKGdjY2EpIC0gaHR0cDovL2djY2EudGsKICovCg==')
 
     with open(salida_f, 'w', 'utf-8') as f_salida:
         with open(salida_tmp_f, 'r', 'utf-8') as f_salida_tmp:
             # salida = '(function(){%s}).call(this);' % f_salida_tmp.read()[:-1]
-            salida = b64decode('KGZ1bmN0aW9uKCl7JXN9KS5jYWxsKHRoaXMpOw==') % f_salida_tmp.read()[:-1]
+            salida = bde('KGZ1bmN0aW9uKCl7JXN9KS5jYWxsKHRoaXMpOw==') % f_salida_tmp.read()[:-1]
             compilado = (ext_cod.replace('\n', ' ') + salida) \
                 if args.depurar \
                 else (ext_cod + salida).replace('\n', ' ')
