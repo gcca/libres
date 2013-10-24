@@ -261,7 +261,8 @@ else:
     with open(salida_f, 'w', 'utf-8') as f_salida:
         with open(salida_tmp_f, 'r', 'utf-8') as f_salida_tmp:
             # salida = '(function(){%s}).call(this);' % f_salida_tmp.read()[:-1]
-            salida = bde('KGZ1bmN0aW9uKCl7JXN9KS5jYWxsKHRoaXMpOw==') % f_salida_tmp.read()[:-1]
+            salida_read  = f_salida_tmp.read()[:-1]
+            salida = bde('KGZ1bmN0aW9uKCl7JXN9KS5jYWxsKHRoaXMpOw==') % salida_read if '.js' == sufijo else salida_read
             compilado = (ext_cod.replace('\n', ' ') + salida) \
                 if args.depurar \
                 else (ext_cod + salida).replace('\n', ' ')
