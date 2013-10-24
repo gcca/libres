@@ -446,7 +446,7 @@ a,r):"function"==typeof a&&a(Error(r+": "+t.status+" "+t.statusText)))},t.send(n
 
 import sys
 import os
-import io
+# import io
 import execjs
 from base64 import b64decode
 
@@ -485,10 +485,12 @@ def compilar_mods(ls_c, gblmod = True):
 
     mods = re.findall(r'(.*) = require \'(.*)\'', ls)
 
+    base = os.path.dirname(os.path.abspath(ls_c))
     for mod_var, mod_c in mods:
-        abme = os.path.abspath(mod_c + '.ls')
+        abme = os.path.abspath(os.path.join(base, mod_c) + '.ls')
         #abme = 'gz$' + abme.replace('/', '$').replace('\\', '$')
-        print('%s - %s - %s' % (mod_c, abme, ls_c))
+        # print('%s - %s - %s' % (mod_c, abme, ls_c))
+        # print('%s %s %s' % (mod_var, mod_c, abme))
         abme = ''.join(c for c in abme if c.isalpha() or c is '$')
 
         if abme in hsit:
@@ -519,7 +521,37 @@ def compilar_mods(ls_c, gblmod = True):
 
     return ls
 
-compilar = lambda ls_c: als(compilar_mods(ls_c))
+# compilar = lambda ls_c: als(compilar_mods(ls_c))
+def compilar(ls_c):
+    try:
+        lsc = compilar_mods(ls_c)
+        lscd = als(lsc)
+    except Exception as e:
+        msg = e.message
+        il = int(re.findall(r'line (.*)', msg)[0])
+        lsc = lsc.split('\n')
+
+        for l in lsc[il-3:il-1]:
+            print('%s' % l)
+
+        # if 'posix' == os.name:
+        if b64decode('cG9zaXg=') == os.name:
+            ll = b64decode('G1s5MW0bWzFtJXMbWzBt')
+            for l in lsc[il-1:il+1]:
+                # print('\033[91m\033[1m%s\033[0m' % l)
+                print(ll % l)
+        else:
+            ll = b64decode('LS0+JXM=')
+            for l in lsc[il-1:il+1]:
+                # print('-->%s' % l[3:])
+                print(ll % l[3:])
+
+        for l in lsc[il+1:il+3]:
+            print('%s' % l)
+
+        sys.exit(-1)
+    else:
+        return lscd
 
 if '__main__' == __name__:
     if 2 > len(sys.argv):
