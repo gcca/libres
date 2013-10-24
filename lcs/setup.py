@@ -260,7 +260,8 @@ else:
 
     with open(salida_f, 'w', 'utf-8') as f_salida:
         with open(salida_tmp_f, 'r', 'utf-8') as f_salida_tmp:
-            salida = f_salida_tmp.read()
+            # salida = '(function(){%s}).call(this);' % f_salida_tmp.read()[:-1]
+            salida = b64decode('KGZ1bmN0aW9uKCl7JXN9KS5jYWxsKHRoaXMpOw==') % f_salida_tmp.read()[:-1]
             compilado = (ext_cod.replace('\n', ' ') + salida) \
                 if args.depurar \
                 else (ext_cod + salida).replace('\n', ' ')
