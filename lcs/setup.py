@@ -8,7 +8,7 @@ import argparse
 import lsc
 import lessc
 
-def depender(dependencias, dir):
+def depender(dependencias, dir_):
     dep_cod = ''
 
     if dependencias:
@@ -20,7 +20,7 @@ def depender(dependencias, dir):
         sufijo_dep = map_sufijo_dep[sufijo]
 
         for dep in dependencias:
-            dep_f = os.path.join(dir, dep + sufijo_dep)
+            dep_f = os.path.join(dir_, dep + sufijo_dep)
 
             with open(dep_f, 'r', 'utf-8') as f_dep:
                 dep_cod += f_dep.read()
@@ -183,11 +183,48 @@ else:
         })
 
         if '.css' == sufijo:
+            import simplejson as json
+            import re
             map_s = ''
             with open(map_nom, 'r') as map_f:
                 map_s = map_f.read().replace(' ', '').replace('\n', '')
             with open(map_nom, 'w') as map_f:
                 map_f.write(map_s)
+            map_d = json.loads(map_s[23:-2])
+
+            with open(salida_tmp_f, 'r', 'utf-8') as f_salida_tmp:
+                salida_tmp = f_salida_tmp.read()
+
+
+            # base = r'\[class.="%s([a-zA-Z]+)-"\]'
+            base = bde('XFtjbGFzcy49IiVzKFthLXpBLVpdKyktIlxd')
+            bse = base % ''
+            bce = base % ' '
+
+            # borig = r'\[class(.)="%s(%s)-"\]'
+            # bdest = r'[class\1="%s%s-"]'
+            borig = bde('XFtjbGFzcyguKT0iJXMoJXMpLSJcXQ==')
+            bdest = bde('W2NsYXNzXDE9IiVzJXMtIl0=')
+            bose = borig % ('', '%s')
+            boce = borig % (' ', '%s')
+            bdse = bdest % ('', '%s')
+            bdce = bdest % (' ', '%s')
+
+
+            classes = set(re.findall(bse, salida_tmp))
+            for style in classes:
+                salida_tmp = re.sub(bose % style,
+                                    bdse % map_d[style],
+                                    salida_tmp)
+            classes = set(re.findall(bce, salida_tmp))
+            for style in classes:
+                salida_tmp = re.sub(boce % style,
+                                    bdce % map_d[style],
+                                    salida_tmp)
+
+
+            with open(salida_tmp_f, 'w', 'utf-8') as f_salida_tmp:
+                f_salida_tmp.write(salida_tmp)
 
         os.remove(entrada_tmp_f)
 
