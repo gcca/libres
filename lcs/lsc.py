@@ -531,22 +531,26 @@ def compilar(ls_c):
         il = int(re.findall(r'line (.*)', msg)[0])
         lsc = lsc.split('\n')
 
-        for l in lsc[il-3:il-1]:
+        b = 5
+        s = 1
+
+
+        for l in lsc[il-b:il-s]:
             print('%s' % l)
 
         # if 'posix' == os.name:
         if b64decode('cG9zaXg=') == os.name:
             ll = b64decode('G1s5MW0bWzFtJXMbWzBt')
-            for l in lsc[il-1:il+1]:
+            for l in lsc[il-s:il+s]:
                 # print('\033[91m\033[1m%s\033[0m' % l)
                 print(ll % l)
         else:
-            ll = b64decode('LS0+JXM=')
-            for l in lsc[il-1:il+1]:
-                # print('-->%s' % l[3:])
-                print(ll % l[3:])
+            ll = b64decode('JXMgPC0t')
+            for l in lsc[il-s:il+s]:
+                # print('%s<--' % l[3:])
+                print(ll % l)
 
-        for l in lsc[il+1:il+3]:
+        for l in lsc[il+s:il+b]:
             print('%s' % l)
 
         sys.exit(-1)
