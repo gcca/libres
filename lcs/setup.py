@@ -18,8 +18,13 @@ def depender(dependencias, dir_):
         }
 
         sufijo_dep = map_sufijo_dep[sufijo]
+        sufijo_rea = sufijo_dep
 
         for dep in dependencias:
+            sufijo_dep = sufijo_rea
+            if '.js' == sufijo and not args.optimizar and os.path.exists(os.path.join(dir_, dep + '-all.js')):
+                sufijo_dep = '-all.js'
+
             dep_f = os.path.join(dir_, dep + sufijo_dep)
 
             with open(dep_f, 'r', 'utf-8') as f_dep:
@@ -104,7 +109,7 @@ else:
     salida_tmp_f  = os.path.join(tmp_b, f_nombase) + sufijo
 
     map_nom = os.path.join(tmp_b, 'mapr-' + f_nombase )
-    if '.js' == sufijo and not os.path.exists(map_nom):
+    if '.js' == sufijo and args.optimizar and not os.path.exists(map_nom):
         print('Error: Compilar antes el *.less')
         sys.exit(0)
 
@@ -173,6 +178,9 @@ else:
                 for ext in args.externas:
                     compresor += ' --externs %s' % os.path.join(dir_dependencias,
                                                                 ext + sufijo)
+
+            # compresor += ' --use_types_for_optimization '
+            compresor += bde('IC0tdXNlX3R5cGVzX2Zvcl9vcHRpbWl6YXRpb24g')
 
         os.system(compresor % {
             'compresor' : ruta_compresor,
@@ -245,39 +253,43 @@ else:
 
                 #with open('renaming_map.js', 'r') as f_rem:
                 #with open(bde('cmVuYW1pbmdfbWFwLmpz'), 'r') as f_rem:
-                with open(map_nom, 'r') as f_rem:
-                    f_sal.write(f_rem.read() \
-                                    .replace(' ', '') \
-                                    .replace('\n', '')
-                                + int_cod.encode('utf-8') + compilado \
-                                    #.replace('gz.Css', 'gzc.Css') \
-                                    #.replace(bde('Z3ouQ3Nz'), bde('Z3pjLkNzcw==')) \
-                                    .encode('utf-8'))
+
+                # with open(map_nom, 'r') as f_rem:
+                #     f_sal.write(f_rem.read() \
+                #                     .replace(' ', '') \
+                #                     .replace('\n', '')
+                #                 + int_cod.encode('utf-8') + compilado \
+                #                     #.replace('gz.Css', 'gzc.Css') \
+                #                     #.replace(bde('Z3ouQ3Nz'), bde('Z3pjLkNzcw==')) \
+                #                     .encode('utf-8'))
+                f_sal.write((int_cod + compilado).encode('utf-8'))
         elif '.css' == sufijo:
             entrada_tmp_f = os.path.join(tmp_b, f_nom)
 
-            with open(entrada_tmp_f, 'w', 'utf-8') as f_entrada:
+            # with open(entrada_tmp_f, 'w', 'utf-8') as f_entrada:
+            #     int_cod = depender(args.internas, dir_dependencias)
+            #     # getCssName
+            #     renam = bde('Z29vZy5nZXRDc3NOYW1l')
+            #     # Css
+            #     renom = bde('Z3ouQ3Nz')
+            #     f_entrada.write(int_cod + compilado.replace(renom, renam))
+
+            # compresor = bde('amF2YSAtamFyICUoY29tcHJlc29yKXMgLS1vdXRwdXQtZmlsZSAlKHNhbGlkYSlzIC0tb3V0cHV0LXJlbmFtaW5nLW1hcC1mb3JtYXQgQ0xPU1VSRV9DT01QSUxFRCAtLXJlbmFtZSAlKG5pdmVsKXMgLS1vdXRwdXQtcmVuYW1pbmctbWFwICUobWFwYSlzIC0tYWxsb3ctdW5yZWNvZ25pemVkLWZ1bmN0aW9ucyAtLWFsbG93LXVucmVjb2duaXplZC1wcm9wZXJ0aWVzICUoZW50cmFkYSlz')
+            # os.system(compresor % {
+            #     'compresor' : args.compresor_css,
+            #     'entrada'   : entrada_tmp_f,
+            #     'salida'    : salida_tmp_f,
+            #     'mapa'      : map_nom,
+            #     'nivel'     : 'DEBUG'
+            # })
+
+            # os.remove(entrada_tmp_f)
+            # sys.exit(0)
+
+            with open(salida_tmp_f, 'w') as f_sal:
                 int_cod = depender(args.internas, dir_dependencias)
-                # getCssName
-                renam = bde('Z29vZy5nZXRDc3NOYW1l')
-                # Css
-                renom = bde('Z3ouQ3Nz')
-                f_entrada.write(int_cod + compilado.replace(renom, renam))
-
-            compresor = bde('amF2YSAtamFyICUoY29tcHJlc29yKXMgLS1vdXRwdXQtZmlsZSAlKHNhbGlkYSlzIC0tb3V0cHV0LXJlbmFtaW5nLW1hcC1mb3JtYXQgQ0xPU1VSRV9DT01QSUxFRCAtLXJlbmFtZSAlKG5pdmVsKXMgLS1vdXRwdXQtcmVuYW1pbmctbWFwICUobWFwYSlzIC0tYWxsb3ctdW5yZWNvZ25pemVkLWZ1bmN0aW9ucyAtLWFsbG93LXVucmVjb2duaXplZC1wcm9wZXJ0aWVzICUoZW50cmFkYSlz')
-            os.system(compresor % {
-                'compresor' : args.compresor_css,
-                'entrada'   : entrada_tmp_f,
-                'salida'    : salida_tmp_f,
-                'mapa'      : map_nom,
-                'nivel'     : 'DEBUG'
-            })
-
-            os.remove(entrada_tmp_f)
-            sys.exit(0)
-
-            # with open(salida_tmp_f, 'w') as f_sal:
-            #     f_sal.write(compilado.encode('utf-8'))
+                f_sal.write((int_cod + compilado).encode('utf-8'))
+            # sys.exit(0)
 
             #os.rename(entrada_tmp_f, )
 
