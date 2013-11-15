@@ -37,15 +37,16 @@ def compilar_s(ls_c):
 hsit = []
 # '(window.gzmods.%s=(->\n%sexports = undefined\n%srequire \'%s\'(exports || %s))())'
 #adq = '(window.gzmods.%s=(->\n%s;exports={};module={exports:exports}\n%srequire \'%s\'\n%s(module.exports))())'
-adq = b64decode('KHdpbmRvdy5nem1vZHMuJXM9KC0+CiVzO2V4cG9ydHM9e307bW9kdWxlPXtleHBvcnRzOmV4cG9ydHN9CiVzcmVxdWlyZSAnJXMnCiVzKG1vZHVsZS5leHBvcnRzKSkoKSk=')
-exx = b64decode('d2luZG93Lmd6bW9kcy4=')
-une = b64decode('d2luZG93Lmd6bW9kcz1uZXcgT2JqZWN0Cg==')
+adq = b64decode('KGd6X21vZCQuJXM9KC0+CiVzO2V4cG9ydHM9e307bW9kdWxlPXtleHBvcnRzOmV4cG9ydHN9CiVzcmVxdWlyZSAnJXMnCiVzKG1vZHVsZS5leHBvcnRzKSkoKSk=')
+exx = b64decode('Z3pfbW9kJC4=')
+#une = b64decode('d2luZG93Lmd6bW9kcz1uZXcgT2JqZWN0Cg==')
 def compilar_mods(ls_c, gblmod = True):
     with open(ls_c, 'r') as f_ls:
         ls = f_ls.read()
         if gblmod:
-            ls = une + ls
-            #ls = 'window.gzmods=new Object\n' + ls
+            #ls = une + ls
+            #ls = 'gz_mod$ = new Object;\n' + ls
+            ls = b64decode('Z3pfbW9kJCA9IG5ldyBPYmplY3Q7Cg==') + ls
 
     mods = re.findall(r'(.*) = require \'(.*)\'', ls)
 
@@ -59,6 +60,7 @@ def compilar_mods(ls_c, gblmod = True):
 
         if abme in hsit:
             ls = ls.replace('require \'%s\'' % mod_c, exx + abme)
+            #ls = ls.replace('require \'%s\'' % mod_c, 'gz_mod$.' + abme)
             #ls = ls.replace('require \'%s\'' % mod_c, 'window.gzmods.' + hsit[mod_c])
             continue
         else:
@@ -67,6 +69,7 @@ def compilar_mods(ls_c, gblmod = True):
         i = '    ' * mod_var.count(' ') + '    '
         #ls = ls.replace('require \'%s\'' % mod_c, adq % (abme, i, i, mod_c, mod_var.lstrip()))
         ls = ls.replace('require \'%s\'' % mod_c, adq % (abme, i, i, mod_c, i))
+        #ls = ls.replace('require \'%s\'' % mod_c, '(gz_mod$.%s=(->\n%s;exports={};module={exports:exports}\n%srequire \'%s\'\n%s(module.exports))())' % (abme, i, i, mod_c, i))
 #b64decode('KC0+CiVzZXhwb3J0cyA9IHVuZGVmaW5lZAolc3JlcXVpcmUgJyVzJyhleHBvcnRzIHx8ICVzKSkoKQ==')
 
 
