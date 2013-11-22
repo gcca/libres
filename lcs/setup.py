@@ -7,6 +7,7 @@ from base64 import b64decode as bde
 import argparse
 import lsc
 import lessc
+import jadec
 
 def depender(dependencias, dir_):
     dep_cod = ''
@@ -88,8 +89,38 @@ map_compilador = {
 
 compilar = map_compilador[sufijo]
 
+
 try:
     compilado = compilar(args.fichero)
+    if '.js' == sufijo:
+        runtime = r'''var jade=jade||{};Array.isArray||(Array.isArray=function(b){return"[object Array]"==Object.prototype.toString.call(b)});Object.keys||(Object.keys=function(b){var a=[],c;for(c in b)b.hasOwnProperty(c)&&a.push(c);return a});jade.merge=function(b,a){var c=b["class"],d=a["class"];if(c||d)c=c||[],d=d||[],Array.isArray(c)||(c=[c]),Array.isArray(d)||(d=[d]),b["class"]=c.concat(d).filter(nulls);for(var e in a)"class"!=e&&(b[e]=a[e]);return b};function nulls(b){return null!=b&&""!==b} function joinClasses(b){return Array.isArray(b)?b.map(joinClasses).filter(nulls).join(" "):b}jade.cls=function(b,a){for(var c=[],d=0;d<b.length;d++)a&&a[d]?c.push(jade.escape(joinClasses([b[d]]))):c.push(joinClasses(b[d]));c=joinClasses(c);return c.length?' class="'+c+'"':""}; jade.attr=function(b,a,c,d){return"boolean"==typeof a||null==a?a?" "+(d?b:b+'="'+b+'"'):"":0==b.indexOf("data")&&"string"!=typeof a?" "+b+"='"+JSON.stringify(a).replace(/'/g,"&apos;")+"'":c?" "+b+'="'+jade.escape(a)+'"':" "+b+'="'+a+'"'};jade.attrs=function(b,a,c){var d=[],e=Object.keys(b);if(e.length)for(var h=0;h<e.length;++h){var f=e[h],g=b[f];if("class"==f){if(g=joinClasses(g))a&&a[f]?d.push(" "+f+'="'+jade.escape(g)+'"'):d.push(" "+f+'="'+g+'"')}else d.push(jade.attr(f,g,a&&a[f],c))}return d.join("")}; jade.escape=function(b){return String(b).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}; jade.rethrow=function rethrow(a,c,d,e){if(!(a instanceof Error))throw a;if(("undefined"!=typeof window||!c)&&!e)throw a.message+=" on line "+d,a;try{e=e||require("fs").readFileSync(c,"utf8")}catch(h){rethrow(a,null,d)}var f=3;e=e.split("\n");var g=Math.max(d-f,0),f=Math.min(e.length,d+f),f=e.slice(g,f).map(function(a,c){var e=c+g+1;return(e==d?"  > ":"    ")+e+"| "+a}).join("\n");a.path=c;a.message=(c||"Jade")+":"+d+"\n"+f+"\n\n"+a.message;throw a;}'''
+        compilado = '%s\n%s\n%s' % (compilado[:12], runtime, compilado[12:])
+
+        import re
+        # jadeps = re.findall(r'([ ]*).*gzc.Jade\(\'(.*)\'\)', compilado)
+        # jadeps = re.findall(r'gzc.Jade\(\'(.*)\'\)', compilado)
+        jadeps = re.findall(bde('Z3pjLkphZGVcKFwnKC4qKVwnXCk='), compilado)
+
+        repla = bde('Z3pjLkphZGUoJyVzJyk=')
+
+        #for i, m in jadeps:
+        for m in jadeps:
+            lns = m.split('\\n')
+            ln = lns[0]
+            ns = len(ln[:-len(ln.lstrip())])
+            js = jadec.ajade('\n'.join(l[ns:] for l in lns))
+            cls = re.findall(r'class=\\"([a-zA-Z0-9- ]+)\\"', js)
+            for cs in cls:
+                js = js.replace(
+                    r'class=\"%s\"' % cs,
+                    'class=\\"" + %s + "\\"' % ' + " " + '.join(map(lambda x: 'gz.Css(\'%s\')' % x, cs.split())))
+            js = re.sub(r' id=\\"([a-zA-Z0-9-]+)\\"', ' id=\\"" + gz.Css(\'\\1\') + "\\"', js)
+            js = re.sub(r'{Css ([a-zA-Z0-9-]+)}', '" + gz.Css(\'\\1\') + "', js)
+            # i = i + ' '
+            # js = '\n'.join(i + l for l in js.split('\n'))
+            # compilado = compilado.replace('gzc.Jade(\'%s\')' % m, js)
+            compilado = compilado.replace(repla % m, js)
+
 except Exception as ex:
     print(ex)
     sys.exit(-1)

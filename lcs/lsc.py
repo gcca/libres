@@ -10,7 +10,7 @@ from base64 import b64decode
 
 import re
 
-BASE = os.path.dirname(__file__)
+# BASE = os.path.dirname(__file__)
 
 ctx = execjs.get()
 
